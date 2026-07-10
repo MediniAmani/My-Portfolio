@@ -1,0 +1,106 @@
+.layout {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.copy {
+  text-align: center;
+}
+
+.title {
+  font-size: clamp(2.4rem, 6vw, 3.8rem);
+  margin-bottom: 1rem;
+}
+
+.lead {
+  color: var(--muted-2);
+  max-width: 34rem;
+  margin: 0 auto 2rem;
+}
+
+.details {
+  display: grid;
+  gap: 1.15rem;
+  text-align: left;
+  max-width: 28rem;
+  margin-inline: auto;
+}
+
+.label {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.details a {
+  font-weight: 600;
+}
+
+.cvLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 1.35rem;
+  background: var(--paper);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.05);
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-weight: 600;
+}
+
+.form input,
+.form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  padding: 0.85rem 1rem;
+  background: #fff;
+  color: var(--ink);
+}
+
+.form input:focus,
+.form textarea:focus {
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+
+.note {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 3rem;
+  }
+
+  .copy {
+    text-align: left;
+  }
+
+  .lead,
+  .details {
+    margin-inline: 0;
+  }
+
+  .form {
+    padding: 1.75rem;
+  }
+}

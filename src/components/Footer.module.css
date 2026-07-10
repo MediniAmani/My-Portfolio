@@ -1,0 +1,85 @@
+.footer {
+  margin-top: auto;
+  padding-block: 4rem 2rem;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.thanks {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.thanks p {
+  font-size: clamp(1.05rem, 2vw, 1.2rem);
+  color: var(--muted-2);
+}
+
+.sign {
+  margin-top: 0.85rem !important;
+  font-family: var(--font-script);
+  font-size: 2rem !important;
+  color: var(--ink) !important;
+}
+
+.grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr;
+  margin-bottom: 2.5rem;
+}
+
+.logo {
+  font-family: var(--font-script);
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.colTitle {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 0.85rem;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  color: var(--ink);
+}
+
+.col a:hover {
+  opacity: 0.65;
+}
+
+.bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.socials {
+  display: flex;
+  gap: 1rem;
+}
+
+.socials a:hover {
+  color: var(--ink);
+}
+
+@media (min-width: 800px) {
+  .grid {
+    grid-template-columns: 1.1fr 1fr 1fr 1.2fr;
+    align-items: start;
+  }
+}

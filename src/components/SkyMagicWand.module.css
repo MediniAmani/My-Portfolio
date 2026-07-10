@@ -1,0 +1,71 @@
+.sky {
+  cursor: none;
+}
+
+.sky :is(a, button) {
+  cursor: none;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.wand {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  filter: drop-shadow(0 0 18px rgba(255, 224, 138, 0.65)) drop-shadow(0 0 34px rgba(196, 181, 253, 0.28));
+  will-change: transform, opacity;
+  /* Anchor so the yellow star tip sits on the pointer */
+  margin-left: -2.55rem;
+  margin-top: -1.15rem;
+  transform: translate3d(-9999px, -9999px, 0);
+  transition: opacity 0.2s ease;
+}
+
+.wandImg {
+  display: block;
+  width: 3.6rem;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  animation: shimmer 2.4s ease-in-out infinite;
+}
+
+.wandVisible {
+  opacity: 1;
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(1.18) saturate(1.25);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky,
+  .sky :is(a, button) {
+    cursor: auto;
+  }
+
+  .wand,
+  .canvas {
+    display: none;
+  }
+
+  .wandImg {
+    animation: none;
+  }
+}

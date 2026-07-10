@@ -1,0 +1,107 @@
+.title {
+  text-align: center;
+  font-size: clamp(2.4rem, 6vw, 3.8rem);
+  margin-bottom: 1.25rem;
+}
+
+.bio {
+  text-align: center;
+  font-size: clamp(1.05rem, 2vw, 1.2rem);
+  color: var(--muted-2);
+  max-width: 40rem;
+  margin: 0 auto 3rem;
+}
+
+.block {
+  padding-block: 2rem;
+  border-top: 1px solid var(--line);
+}
+
+.block h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: 1.25rem;
+}
+
+.nowGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.nowItem {
+  padding: 1.15rem;
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.nowItem h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.4rem;
+}
+
+.nowItem p {
+  color: var(--muted);
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.list li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  color: var(--muted);
+}
+
+.list strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.timeline li {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.year {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.timeline p {
+  color: var(--muted);
+  max-width: 42rem;
+}
+
+.find {
+  color: var(--muted);
+}
+
+.find a {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+@media (min-width: 720px) {
+  .timeline li {
+    grid-template-columns: 5rem 1fr;
+    gap: 1.5rem;
+    align-items: baseline;
+  }
+}
