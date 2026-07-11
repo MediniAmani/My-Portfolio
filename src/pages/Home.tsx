@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { AdminArticleHotspot } from '../components/AdminArticleHotspot'
 import { AddSlot, EditableImageUrl, EditableText, ListItemControls } from '../components/editor/Editable'
 import { ScrollHighlightHero } from '../components/ScrollHighlightHero'
 import { SkyMagicWand } from '../components/SkyMagicWand'
@@ -30,6 +31,7 @@ function ProjectCard({ index, slug }: { index: number; slug: string }) {
             <EditableText path={`projects.${index}.tagline`} as="p" />
           </Link>
         )}
+        <AdminArticleHotspot articlePath={`/work/${slug}`} openLabel="Open case study" />
       </article>
     </ListItemControls>
   )
@@ -56,6 +58,7 @@ function HighlightCard({ index, slug }: { index: number; slug: string }) {
             <EditableText path={`highlights.${index}.meta`} as="p" className={styles.meta} />
           </Link>
         )}
+        <AdminArticleHotspot articlePath={`/work/${slug}`} openLabel="Open related article" />
       </article>
     </ListItemControls>
   )
@@ -242,6 +245,15 @@ export function Home() {
             <EditableText path="home.banner.title" as="p" />
             <EditableText path="home.banner.subtitle" as="span" />
           </div>
+          <AdminArticleHotspot
+            articlePath={
+              home.banner.relatedSlug.trim()
+                ? `/work/${home.banner.relatedSlug.trim()}`
+                : null
+            }
+            relatedSlugPath="home.banner.relatedSlug"
+            openLabel="Open related article"
+          />
         </div>
       </section>
 
@@ -312,6 +324,7 @@ export function Home() {
                 allowClear
                 placeholder={<WorkFeatureMockup />}
               />
+              <AdminArticleHotspot articlePath={featureWork.to} openLabel="Open linked page" />
             </FeatureLink>
 
             <FeatureLink to={featureAbout.to} className={styles.featureCard}>
@@ -326,6 +339,7 @@ export function Home() {
                 allowClear
                 placeholder={<CommunityFeatureMockup chipCount={home.communityCard.chips.length} />}
               />
+              <AdminArticleHotspot articlePath={featureAbout.to} openLabel="Open linked page" />
             </FeatureLink>
           </div>
         </div>

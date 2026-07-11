@@ -74,6 +74,7 @@ export type PortfolioContent = {
       alt: string
       title: string
       subtitle: string
+      relatedSlug: string
     }
     resourcesTitlePrefix: string
     rotatingAudiences: string[]
