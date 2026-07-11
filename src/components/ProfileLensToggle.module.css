@@ -1,0 +1,100 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0 auto 2rem;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.track {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: min(100%, 22rem);
+  padding: 0.28rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.glow {
+  position: absolute;
+  inset: -40% -20%;
+  background: radial-gradient(circle at 30% 40%, rgba(125, 207, 182, 0.22), transparent 55%),
+    radial-gradient(circle at 70% 60%, rgba(180, 120, 80, 0.18), transparent 50%);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.track[data-lens='design'] .glow {
+  opacity: 1;
+}
+
+.thumb {
+  position: absolute;
+  top: 0.28rem;
+  bottom: 0.28rem;
+  left: 0.28rem;
+  width: calc(50% - 0.28rem);
+  border-radius: 999px;
+  background: var(--ink);
+  box-shadow: 0 8px 20px rgba(17, 17, 17, 0.22);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), background 0.35s ease;
+  z-index: 1;
+}
+
+.track[data-lens='design'] .thumb {
+  transform: translateX(100%);
+  background: linear-gradient(135deg, #1c1c22 0%, #2a2430 55%, #1a2a28 100%);
+}
+
+.option {
+  position: relative;
+  z-index: 2;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  margin: 0;
+  padding: 0.7rem 0.9rem;
+  cursor: pointer;
+  color: var(--muted-2);
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  transition: color 0.3s ease;
+}
+
+.option[aria-selected='true'] {
+  color: #fff;
+}
+
+.option:disabled {
+  cursor: wait;
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thumb,
+  .glow,
+  .option {
+    transition: none;
+  }
+}

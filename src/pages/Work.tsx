@@ -1,7 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { ProfileLensToggle } from '../components/ProfileLensToggle'
 import { AddSlot, EditableImageUrl, EditableText, ListItemControls } from '../components/editor/Editable'
 import { useContent } from '../context/ContentContext'
 import { useEditMode, useEditor, useEditorLink } from '../context/EditorContext'
+import {
+  isDataCategory,
+  isDesignCategory,
+  useProfileLens,
+} from '../context/ProfileLensContext'
 import styles from './Work.module.css'
 
 function WorkCard({ index, slug }: { index: number; slug: string }) {
@@ -37,28 +43,57 @@ export function Work() {
   const { projects } = useContent()
   const editor = useEditor()
   const navigate = useNavigate()
+  const { displayLens, fading } = useProfileLens()
+  const panelClass = fading ? `${styles.lensPanel} ${styles.lensPanelFading}` : styles.lensPanel
+
+  const visibleIndexes = projects
+    .map((project, index) => ({ project, index }))
+    .filter(({ project }) => {
+      if (displayLens === 'design') return isDesignCategory(project.category)
+      return isDataCategory(project.category)
+    })
 
   return (
     <div className="section">
       <div className="container">
         <div className={styles.header}>
           <EditableText path="workPage.title" as="h1" className={`${styles.title} fade-up`} />
-          <EditableText path="workPage.lead" as="p" className={`${styles.lead} fade-up-delay`} multiline />
+          <ProfileLensToggle />
         </div>
 
-        <div className={styles.grid}>
-          {projects.map((project, index) => (
-            <WorkCard key={project.slug} index={index} slug={project.slug} />
-          ))}
-          {editor ? (
-            <AddSlot
-              label="Add project"
-              onAdd={() => {
-                const slug = editor.addProject()
-                navigate(`/admin/work/${slug}`)
-              }}
-            />
-          ) : null}
+        <div className={panelClass} aria-busy={fading}>
+          <div className={styles.header}>
+            {displayLens === 'design' ? (
+              <EditableText
+                path="workPage.leadDesign"
+                as="p"
+                className={`${styles.lead} fade-up-delay`}
+                multiline
+              />
+            ) : (
+              <EditableText
+                path="workPage.lead"
+                as="p"
+                className={`${styles.lead} fade-up-delay`}
+                multiline
+              />
+            )}
+          </div>
+
+          <div className={styles.grid}>
+            {visibleIndexes.map(({ project, index }) => (
+              <WorkCard key={project.slug} index={index} slug={project.slug} />
+            ))}
+            {editor ? (
+              <AddSlot
+                label="Add project"
+                onAdd={() => {
+                  const slug = editor.addProject()
+                  navigate(`/admin/work/${slug}`)
+                }}
+              />
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

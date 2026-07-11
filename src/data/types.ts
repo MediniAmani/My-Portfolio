@@ -21,6 +21,11 @@ export type ExperienceItem = {
   bullets: string[]
 }
 
+export type WorkProcessStep = {
+  title: string
+  body: string
+}
+
 export type PortfolioContent = {
   site: {
     name: string
@@ -36,6 +41,13 @@ export type PortfolioContent = {
   }
   projects: Project[]
   experience: ExperienceItem[]
+  designExperience: ExperienceItem[]
+  workProcess: WorkProcessStep[]
+  skills: {
+    technical: string[]
+    soft: string[]
+  }
+  traits: string[]
   nowItems: { title: string; body: string }[]
   awards: { title: string; detail: string }[]
   timeline: { year: string; text: string }[]
@@ -80,17 +92,36 @@ export type PortfolioContent = {
     cvCtaFr: string
     contactCta: string
   }
+  profileLens: {
+    hint: string
+    dataLabel: string
+    designLabel: string
+  }
   aboutPage: {
     title: string
     bio: string
+    bioDesign: string
+    vision: {
+      title: string
+      body: string
+    }
     sections: {
       now: string
       experience: string
+      designExperience: string
+      vision: string
+      skills: string
+      traits: string
+      workProcess: string
       awards: string
       timeline: string
       speaking: string
       certifications: string
       findMe: string
+    }
+    skillsLabels: {
+      technical: string
+      soft: string
     }
     linkedinLabel: string
     fofLabel: string
@@ -98,6 +129,7 @@ export type PortfolioContent = {
   workPage: {
     title: string
     lead: string
+    leadDesign: string
     caseStudyCta: string
     backLabel: string
     notFoundTitle: string

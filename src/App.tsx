@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { ContentProvider } from './context/ContentContext'
 import { EditorProvider } from './context/EditorContext'
+import { ProfileLensProvider } from './context/ProfileLensContext'
 import { About } from './pages/About'
 import { Contact } from './pages/Contact'
 import { Home } from './pages/Home'
@@ -13,7 +14,9 @@ import { EditorShell, RequireAuth } from './pages/admin/EditorShell'
 function PublicTree() {
   return (
     <ContentProvider>
-      <Layout />
+      <ProfileLensProvider>
+        <Layout />
+      </ProfileLensProvider>
     </ContentProvider>
   )
 }
@@ -23,7 +26,9 @@ function EditorTree() {
     <RequireAuth>
       <ContentProvider>
         <EditorProvider>
-          <EditorShell />
+          <ProfileLensProvider>
+            <EditorShell />
+          </ProfileLensProvider>
         </EditorProvider>
       </ContentProvider>
     </RequireAuth>

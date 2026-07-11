@@ -4,12 +4,44 @@
   margin-bottom: 1.25rem;
 }
 
+.lensPanel {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  transition:
+    opacity 0.32s ease,
+    transform 0.32s ease,
+    filter 0.32s ease;
+}
+
+.lensPanelFading {
+  opacity: 0;
+  transform: translateY(0.45rem);
+  filter: blur(4px);
+  pointer-events: none;
+}
+
 .bio {
   text-align: center;
   font-size: clamp(1.05rem, 2vw, 1.2rem);
   color: var(--muted-2);
   max-width: 40rem;
-  margin: 0 auto 3rem;
+  margin: 0 auto 2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lensPanel,
+  .lensPanelFading {
+    transition: none;
+    filter: none;
+    transform: none;
+  }
+}
+
+.visionBody {
+  color: var(--muted);
+  max-width: 42rem;
+  line-height: 1.65;
 }
 
 .block {
@@ -88,6 +120,65 @@
   flex-direction: column;
   gap: 0.45rem;
   color: var(--muted);
+}
+
+.skillsGrid {
+  display: grid;
+  gap: 1.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+}
+
+.skillsHeading {
+  font-size: 1.05rem;
+  margin: 0 0 0.75rem;
+}
+
+.skillList,
+.traitList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  color: var(--muted);
+}
+
+.traitList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.65rem 1.25rem;
+}
+
+.processList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  counter-reset: process;
+}
+
+.processList li {
+  counter-increment: process;
+}
+
+.processList h3 {
+  font-size: 1.05rem;
+  margin: 0 0 0.35rem;
+}
+
+.processList h3::before {
+  content: counter(process) '. ';
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.processList p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 42rem;
 }
 
 .list {

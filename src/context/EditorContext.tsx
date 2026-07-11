@@ -27,6 +27,11 @@ type EditorContextValue = {
   addProject: () => string
   addNowItem: () => void
   addExperience: () => void
+  addDesignExperience: () => void
+  addWorkProcessStep: () => void
+  addTechnicalSkill: () => void
+  addSoftSkill: () => void
+  addTrait: () => void
   addAward: () => void
   addTimelineItem: () => void
   addSpeaking: () => void
@@ -186,6 +191,46 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     )
   }, [])
 
+  const addDesignExperience = useCallback(() => {
+    setDraft((prev) =>
+      setAt(prev, 'designExperience', [
+        ...prev.designExperience,
+        {
+          company: 'Client',
+          title: 'Independent UX designer',
+          dates: 'YYYY - YYYY',
+          bullets: ['What you designed'],
+        },
+      ]),
+    )
+  }, [])
+
+  const addWorkProcessStep = useCallback(() => {
+    setDraft((prev) =>
+      setAt(prev, 'workProcess', [
+        ...prev.workProcess,
+        {
+          title: 'New step',
+          body: 'Describe this step in your UX process.',
+        },
+      ]),
+    )
+  }, [])
+
+  const addTechnicalSkill = useCallback(() => {
+    setDraft((prev) =>
+      setAt(prev, 'skills.technical', [...prev.skills.technical, 'New skill']),
+    )
+  }, [])
+
+  const addSoftSkill = useCallback(() => {
+    setDraft((prev) => setAt(prev, 'skills.soft', [...prev.skills.soft, 'New soft skill']))
+  }, [])
+
+  const addTrait = useCallback(() => {
+    setDraft((prev) => setAt(prev, 'traits', [...prev.traits, 'New trait']))
+  }, [])
+
   const addAward = useCallback(() => {
     setDraft((prev) =>
       setAt(prev, 'awards', [...prev.awards, { title: 'New award', detail: 'Details' }]),
@@ -259,6 +304,11 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       addProject,
       addNowItem,
       addExperience,
+      addDesignExperience,
+      addWorkProcessStep,
+      addTechnicalSkill,
+      addSoftSkill,
+      addTrait,
       addAward,
       addTimelineItem,
       addSpeaking,
@@ -282,6 +332,11 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       addProject,
       addNowItem,
       addExperience,
+      addDesignExperience,
+      addWorkProcessStep,
+      addTechnicalSkill,
+      addSoftSkill,
+      addTrait,
       addAward,
       addTimelineItem,
       addSpeaking,

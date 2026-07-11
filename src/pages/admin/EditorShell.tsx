@@ -140,6 +140,51 @@ export function EditorShell() {
                     <button
                       type="button"
                       onClick={() => {
+                        editor.addDesignExperience()
+                        setAddOpen(false)
+                      }}
+                    >
+                      Design freelance
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        editor.addWorkProcessStep()
+                        setAddOpen(false)
+                      }}
+                    >
+                      Process step
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        editor.addTechnicalSkill()
+                        setAddOpen(false)
+                      }}
+                    >
+                      Technical skill
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        editor.addSoftSkill()
+                        setAddOpen(false)
+                      }}
+                    >
+                      Soft skill
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        editor.addTrait()
+                        setAddOpen(false)
+                      }}
+                    >
+                      Trait
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
                         editor.addAward()
                         setAddOpen(false)
                       }}
