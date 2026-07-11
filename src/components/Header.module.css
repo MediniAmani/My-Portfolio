@@ -3,7 +3,8 @@
   top: 0;
   z-index: 40;
   padding-block: 1rem;
-  background: transparent;
+  background: rgba(244, 242, 236, 0.88);
+  backdrop-filter: blur(12px);
 }
 
 .inner {
@@ -26,6 +27,7 @@
   font-family: var(--font-script);
   font-size: 1.85rem;
   font-weight: 700;
+  font-style: italic;
   line-height: 1;
   color: var(--ink);
 }

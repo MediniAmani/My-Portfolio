@@ -1,9 +1,32 @@
 import { NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { nav } from '../data/content'
+import { EditableText } from './editor/Editable'
+import { useContent } from '../context/ContentContext'
+import { useEditMode, useEditorLink } from '../context/EditorContext'
 import styles from './Header.module.css'
 
+function EditorNavLink({
+  to,
+  className,
+  children,
+  onClick,
+}: {
+  to: string
+  className?: string | ((args: { isActive: boolean }) => string)
+  children: React.ReactNode
+  onClick?: () => void
+}) {
+  const resolved = useEditorLink(to)
+  return (
+    <NavLink to={resolved} className={className} onClick={onClick}>
+      {children}
+    </NavLink>
+  )
+}
+
 export function Header() {
+  const { nav, site } = useContent()
+  const editing = useEditMode()
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
@@ -13,28 +36,51 @@ export function Header() {
     }
   }, [open])
 
+  useEffect(() => {
+    if (!open) return
+    function onKey(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
+
+  const contactAlreadyLinked = nav.links.some((link) => link.to === '/contact')
+
   return (
-    <header className={styles.header}>
+    <header
+      className={styles.header}
+      style={editing ? { top: 'var(--editor-bar-h, 3.4rem)' } : undefined}
+    >
       <div className={`container ${styles.inner}`}>
-        <NavLink to="/" className={styles.logo} onClick={() => setOpen(false)} aria-label="Home">
-          <span className={styles.monogram}>{nav.monogram}</span>
-        </NavLink>
+        <EditorNavLink to="/" className={styles.logo} onClick={() => setOpen(false)}>
+          <EditableText path="nav.monogram" as="span" className={styles.monogram} />
+        </EditorNavLink>
 
         <nav className={styles.pill} aria-label="Primary">
-          {nav.links.map((link) => (
-            <NavLink
+          {nav.links.map((link, index) => (
+            <EditorNavLink
               key={link.to}
               to={link.to}
-              className={({ isActive }) =>
-                `${styles.pillLink} ${isActive ? styles.active : ''}`
-              }
+              className={({ isActive }) => `${styles.pillLink} ${isActive ? styles.active : ''}`}
             >
-              {link.label}
-            </NavLink>
+              <EditableText path={`nav.links.${index}.label`} as="span" />
+            </EditorNavLink>
           ))}
-          <NavLink to="/contact" className={styles.pillCta}>
-            {nav.moreLabel}
-          </NavLink>
+          <a href={site.cvEn} className={styles.pillLink} download>
+            <EditableText path="nav.cvEnLabel" as="span" />
+          </a>
+          <a href={site.cvFr} className={styles.pillLink} download>
+            <EditableText path="nav.cvFrLabel" as="span" />
+          </a>
+          <a href={site.linkedin} className={styles.pillLink} target="_blank" rel="noreferrer">
+            <EditableText path="nav.linkedinLabel" as="span" />
+          </a>
+          {!contactAlreadyLinked ? (
+            <EditorNavLink to="/contact" className={styles.pillCta}>
+              <EditableText path="nav.moreLabel" as="span" />
+            </EditorNavLink>
+          ) : null}
         </nav>
 
         <button
@@ -52,16 +98,34 @@ export function Header() {
       <div
         id="mobile-menu"
         className={`${styles.mobile} ${open ? styles.mobileOpen : ''}`}
+        onClick={() => setOpen(false)}
       >
-        <div className={styles.mobilePanel}>
-          <NavLink to="/" onClick={() => setOpen(false)}>
-            {nav.homeLabel}
-          </NavLink>
-          {nav.links.map((link) => (
-            <NavLink key={link.to} to={link.to} onClick={() => setOpen(false)}>
-              {link.label}
-            </NavLink>
+        <div
+          className={styles.mobilePanel}
+          onClick={(event) => event.stopPropagation()}
+        >
+          <EditorNavLink to="/" onClick={() => setOpen(false)}>
+            <EditableText path="nav.homeLabel" as="span" />
+          </EditorNavLink>
+          {nav.links.map((link, index) => (
+            <EditorNavLink key={link.to} to={link.to} onClick={() => setOpen(false)}>
+              <EditableText path={`nav.links.${index}.label`} as="span" />
+            </EditorNavLink>
           ))}
+          <a href={site.cvEn} download onClick={() => setOpen(false)}>
+            <EditableText path="nav.cvEnLabel" as="span" />
+          </a>
+          <a href={site.cvFr} download onClick={() => setOpen(false)}>
+            <EditableText path="nav.cvFrLabel" as="span" />
+          </a>
+          <a href={site.linkedin} target="_blank" rel="noreferrer" onClick={() => setOpen(false)}>
+            <EditableText path="nav.linkedinLabel" as="span" />
+          </a>
+          {!contactAlreadyLinked ? (
+            <EditorNavLink to="/contact" onClick={() => setOpen(false)}>
+              <EditableText path="nav.moreLabel" as="span" />
+            </EditorNavLink>
+          ) : null}
         </div>
       </div>
     </header>

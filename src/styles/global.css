@@ -10,7 +10,7 @@
   --dark-card: #16161c;
   --dark-muted: #a8a8b3;
   --accent: #111111;
-  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'Inter Tight', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-script: 'Caveat', cursive;
   --max: 72rem;
   --pad: clamp(1.25rem, 4vw, 2.75rem);
@@ -103,6 +103,10 @@ p {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+#main-content:focus {
+  outline: none;
 }
 
 .container {

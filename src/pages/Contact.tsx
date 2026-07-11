@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { contactPage, site } from '../data/content'
+import { EditableText } from '../components/editor/Editable'
+import { useContent } from '../context/ContentContext'
 import styles from './Contact.module.css'
 
 export function Contact() {
+  const { contactPage, site } = useContent()
   const [status, setStatus] = useState<'idle' | 'ready'>('idle')
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -13,9 +15,7 @@ export function Contact() {
     const email = String(form.get('email') ?? '').trim()
     const message = String(form.get('message') ?? '').trim()
 
-    const subject = encodeURIComponent(
-      `${contactPage.mailSubjectPrefix} ${name || 'visitor'}`,
-    )
+    const subject = encodeURIComponent(`${contactPage.mailSubjectPrefix} ${name}`)
     const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)
     window.location.href = `mailto:${site.email}?subject=${subject}&body=${body}`
     setStatus('ready')
@@ -25,35 +25,40 @@ export function Contact() {
     <div className="section">
       <div className={`container ${styles.layout}`}>
         <div className={styles.copy}>
-          <h1 className={`${styles.title} fade-up`}>{contactPage.title}</h1>
-          <p className={`${styles.lead} fade-up-delay`}>{contactPage.lead}</p>
+          <EditableText path="contactPage.title" as="h1" className={`${styles.title} fade-up`} />
+          <EditableText path="contactPage.lead" as="p" className={`${styles.lead} fade-up-delay`} multiline />
 
           <div className={styles.details}>
             <div>
-              <p className={styles.label}>{contactPage.labels.email}</p>
-              <a href={`mailto:${site.email}`}>{site.email}</a>
-            </div>
-            <div>
-              <p className={styles.label}>{contactPage.labels.linkedin}</p>
-              <a href={site.linkedin} target="_blank" rel="noreferrer">
-                {site.linkedinLabel}
+              <EditableText path="contactPage.labels.email" as="p" className={styles.label} />
+              <a href={`mailto:${site.email}`}>
+                <EditableText path="site.email" as="span" />
               </a>
             </div>
             <div>
-              <p className={styles.label}>{contactPage.labels.basedIn}</p>
-              <p>{site.location}</p>
+              <EditableText path="contactPage.labels.linkedin" as="p" className={styles.label} />
+              <a href={site.linkedin} target="_blank" rel="noreferrer">
+                <EditableText path="site.linkedinLabel" as="span" />
+              </a>
             </div>
             <div>
-              <p className={styles.label}>{contactPage.labels.cv}</p>
+              <EditableText path="contactPage.labels.fof" as="p" className={styles.label} />
+              <a href={site.fofUrl} target="_blank" rel="noreferrer">
+                <EditableText path="site.fofLabel" as="span" />
+              </a>
+            </div>
+            <div>
+              <EditableText path="contactPage.labels.basedIn" as="p" className={styles.label} />
+              <EditableText path="site.location" as="p" />
+            </div>
+            <div>
+              <EditableText path="contactPage.labels.cv" as="p" className={styles.label} />
               <div className={styles.cvLinks}>
                 <a href={site.cvEn} download>
-                  {contactPage.cvLinks.pdf}
+                  <EditableText path="contactPage.cvLinks.en" as="span" />
                 </a>
-                <a href={site.cvEnDocx} download>
-                  {contactPage.cvLinks.wordEn}
-                </a>
-                <a href={site.cvFrDocx} download>
-                  {contactPage.cvLinks.wordFr}
+                <a href={site.cvFr} download>
+                  <EditableText path="contactPage.cvLinks.fr" as="span" />
                 </a>
               </div>
             </div>
@@ -62,22 +67,22 @@ export function Contact() {
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <label>
-            {contactPage.labels.name}
+            <EditableText path="contactPage.labels.name" as="span" />
             <input name="name" type="text" autoComplete="name" required />
           </label>
           <label>
-            {contactPage.labels.email}
+            <EditableText path="contactPage.labels.email" as="span" />
             <input name="email" type="email" autoComplete="email" required />
           </label>
           <label>
-            {contactPage.labels.message}
+            <EditableText path="contactPage.labels.message" as="span" />
             <textarea name="message" rows={6} required />
           </label>
           <button className="btn" type="submit">
-            {contactPage.submit}
+            <EditableText path="contactPage.submit" as="span" />
           </button>
           {status === 'ready' ? (
-            <p className={styles.note}>{contactPage.sentNote}</p>
+            <EditableText path="contactPage.sentNote" as="p" className={styles.note} />
           ) : null}
         </form>
       </div>

@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
-import { hero } from '../data/content'
+import { resolveMediaUrl } from '../api/client'
+import { EditableImageUrl, EditableText } from './editor/Editable'
+import { useContent } from '../context/ContentContext'
+import { useEditMode } from '../context/EditorContext'
 import { fireEmojiBurst, getEmojiEffect } from '../lib/emojiBurst'
 import styles from './ScrollHighlightHero.module.css'
 
@@ -9,6 +12,7 @@ type Token =
   | { type: 'space' }
   | { type: 'emoji'; text: string }
   | { type: 'avatar' }
+  | { type: 'break' }
 
 function tokenize(text: string): Token[] {
   const parts = text.split(/(\s+)/)
@@ -24,7 +28,6 @@ function tokenize(text: string): Token[] {
       tokens.push({ type: 'emoji', text: part })
       continue
     }
-    // emoji may be attached to punctuation-free words; split emoji clusters
     const emojiSplit = part.split(/(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*)/u)
     for (const chunk of emojiSplit) {
       if (!chunk) continue
@@ -40,23 +43,31 @@ function tokenize(text: string): Token[] {
 }
 
 export function ScrollHighlightHero() {
+  const { hero } = useContent()
+  const editMode = useEditMode()
   const trackRef = useRef<HTMLElement>(null)
   const [progress, setProgress] = useState(0.08)
-
   const [spinning, setSpinning] = useState<Record<number, number>>({})
 
   const tokens = useMemo(() => {
     const leadTokens = tokenize(hero.lead)
     const restTokens = tokenize(hero.rest)
-    return [...leadTokens, { type: 'avatar' as const }, { type: 'space' as const }, ...restTokens]
-  }, [])
+    return [
+      ...leadTokens,
+      { type: 'avatar' as const },
+      { type: 'break' as const },
+      ...restTokens,
+    ]
+  }, [hero.lead, hero.rest])
 
   const highlightableCount = useMemo(
-    () => tokens.filter((t) => t.type === 'word' || t.type === 'emoji' || t.type === 'avatar').length,
+    () => tokens.filter((t) => t.type === 'word' || t.type === 'emoji').length,
     [tokens],
   )
 
   useEffect(() => {
+    if (editMode) return
+
     const track = trackRef.current
     if (!track) return
 
@@ -93,9 +104,29 @@ export function ScrollHighlightHero() {
       window.removeEventListener('resize', onScroll)
       if (frame) window.cancelAnimationFrame(frame)
     }
-  }, [])
+  }, [editMode])
+
+  if (editMode) {
+    return (
+      <section className={styles.track} aria-label="Introduction editor" style={{ height: 'auto' }}>
+        <div className={styles.sticky} style={{ position: 'relative', minHeight: 'auto' }}>
+          <div className="container">
+            <div className={styles.heroType}>
+              <EditableText path="hero.lead" as="p" multiline />
+              <span className={styles.avatarPill}>
+                <EditableImageUrl path="hero.avatarImage" className={styles.avatarImg} />
+              </span>
+              <br />
+              <EditableText path="hero.rest" as="p" multiline />
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   const activeCount = Math.floor(progress * (highlightableCount + 0.999))
+  const avatarSrc = resolveMediaUrl(hero.avatarImage)
 
   function handleEmojiClick(
     emoji: string,
@@ -119,32 +150,28 @@ export function ScrollHighlightHero() {
   return (
     <section ref={trackRef} className={styles.track} aria-label="Introduction">
       <div className={styles.sticky}>
-        <div className={`container ${styles.inner}`}>
+        <div className="container">
           <h1 className={styles.heroType}>
             {tokens.map((token, index) => {
               if (token.type === 'space') {
                 return <span key={`s-${index}`}> </span>
               }
 
-              highlightIndex += 1
-              const active = highlightIndex <= activeCount
-              const className = active ? styles.active : styles.muted
-
               if (token.type === 'avatar') {
                 return (
-                  <span
-                    key={`a-${index}`}
-                    className={`${styles.avatarPill} ${active ? styles.avatarActive : styles.avatarMuted}`}
-                    aria-hidden="true"
-                  >
-                    <img
-                      src={hero.avatarImage}
-                      alt=""
-                      className={styles.avatarImg}
-                    />
+                  <span key={`a-${index}`} className={styles.avatarPill} aria-hidden="true">
+                    <img src={avatarSrc} alt="" className={styles.avatarImg} />
                   </span>
                 )
               }
+
+              if (token.type === 'break') {
+                return <br key={`b-${index}`} />
+              }
+
+              highlightIndex += 1
+              const active = highlightIndex <= activeCount
+              const className = active ? styles.active : styles.muted
 
               if (token.type === 'emoji') {
                 const effect = getEmojiEffect(token.text)

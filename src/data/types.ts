@@ -1,0 +1,163 @@
+export type Project = {
+  slug: string
+  title: string
+  tagline: string
+  category: string
+  summary: string
+  problem: string
+  approach: string
+  impact: string
+  highlights: string[]
+  tools: string[]
+  image: string
+  externalUrl: string
+  externalLabel: string
+}
+
+export type ExperienceItem = {
+  company: string
+  title: string
+  dates: string
+  bullets: string[]
+}
+
+export type PortfolioContent = {
+  site: {
+    name: string
+    email: string
+    phone: string
+    location: string
+    linkedin: string
+    linkedinLabel: string
+    fofUrl: string
+    fofLabel: string
+    cvEn: string
+    cvFr: string
+  }
+  projects: Project[]
+  experience: ExperienceItem[]
+  nowItems: { title: string; body: string }[]
+  awards: { title: string; detail: string }[]
+  timeline: { year: string; text: string }[]
+  speaking: string[]
+  certifications: string[]
+  highlights: { slug: string; title: string; meta: string; image: string }[]
+  nav: {
+    monogram: string
+    moreLabel: string
+    homeLabel: string
+    cvEnLabel: string
+    cvFrLabel: string
+    linkedinLabel: string
+    links: { to: string; label: string }[]
+  }
+  hero: {
+    lead: string
+    rest: string
+    avatarImage: string
+  }
+  home: {
+    banner: {
+      image: string
+      alt: string
+      title: string
+      subtitle: string
+    }
+    resourcesTitlePrefix: string
+    rotatingAudiences: string[]
+    darkHeadline: string
+    features: { to: string; label: string; title: string; cta: string; image: string }[]
+    communityCard: {
+      eyebrow: string
+      title: string
+      meta: string
+      badge: string
+      chips: string[]
+    }
+    highlightsTitle: string
+    highlightsLead: string
+    cvCtaEn: string
+    cvCtaFr: string
+    contactCta: string
+  }
+  aboutPage: {
+    title: string
+    bio: string
+    sections: {
+      now: string
+      experience: string
+      awards: string
+      timeline: string
+      speaking: string
+      certifications: string
+      findMe: string
+    }
+    linkedinLabel: string
+    fofLabel: string
+  }
+  workPage: {
+    title: string
+    lead: string
+    caseStudyCta: string
+    backLabel: string
+    notFoundTitle: string
+    notFoundBody: string
+    backToWork: string
+    overview: string
+    problem: string
+    approach: string
+    impact: string
+    highlights: string
+    tools: string
+    moreProjects: string
+    discuss: string
+  }
+  contactPage: {
+    title: string
+    lead: string
+    labels: {
+      email: string
+      linkedin: string
+      fof: string
+      basedIn: string
+      cv: string
+      name: string
+      message: string
+    }
+    cvLinks: {
+      en: string
+      fr: string
+    }
+    submit: string
+    sentNote: string
+    mailSubjectPrefix: string
+  }
+  footer: {
+    thanks: string[]
+    sign: string
+    monogram: string
+    hello: {
+      title: string
+      about: string
+      contact: string
+      linkedin: string
+      fof: string
+      email: string
+    }
+    focus: {
+      title: string
+      items: string[]
+    }
+    resources: {
+      title: string
+      cvEn: string
+      cvFr: string
+      allWork: string
+    }
+    socials: {
+      linkedin: string
+      fof: string
+      email: string
+    }
+  }
+}

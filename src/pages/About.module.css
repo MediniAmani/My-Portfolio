@@ -44,6 +44,52 @@
   color: var(--muted);
 }
 
+.experienceList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.experienceItem {
+  padding: 1.15rem 0;
+}
+
+.experienceHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.experienceHead h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.experienceDates {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.experienceCompany {
+  margin: 0 0 0.75rem;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.experienceBullets {
+  list-style: disc;
+  margin: 0;
+  padding-left: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  color: var(--muted);
+}
+
 .list {
   list-style: none;
   padding: 0;

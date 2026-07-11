@@ -19,6 +19,7 @@
   margin-top: 0.85rem !important;
   font-family: var(--font-script);
   font-size: 2rem !important;
+  font-style: italic;
   color: var(--ink) !important;
 }
 
@@ -33,6 +34,7 @@
   font-family: var(--font-script);
   font-size: 2.5rem;
   font-weight: 700;
+  font-style: italic;
   line-height: 1;
 }
 

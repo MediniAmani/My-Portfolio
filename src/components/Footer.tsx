@@ -1,69 +1,91 @@
 import { Link } from 'react-router-dom'
-import { footer, site } from '../data/content'
+import { EditableText } from './editor/Editable'
+import { useContent } from '../context/ContentContext'
+import { useEditorLink } from '../context/EditorContext'
 import styles from './Footer.module.css'
 
 export function Footer() {
+  const { footer, site } = useContent()
+  const aboutTo = useEditorLink('/about')
+  const contactTo = useEditorLink('/contact')
+  const workTo = useEditorLink('/work')
+  const homeTo = useEditorLink('/')
+
   return (
     <footer className={styles.footer}>
       <div className={`container ${styles.thanks}`}>
-        {footer.thanks.map((line) => (
-          <p key={line}>{line}</p>
+        {footer.thanks.map((_, index) => (
+          <EditableText key={index} path={`footer.thanks.${index}`} as="p" />
         ))}
-        <p className={styles.sign}>{footer.sign}</p>
+        <EditableText path="footer.sign" as="p" className={styles.sign} />
       </div>
 
       <div className={`container ${styles.grid}`}>
-        <Link to="/" className={styles.logo} aria-label="Home">
-          {footer.monogram}
+        <Link to={homeTo} className={styles.logo} aria-label="Home">
+          <EditableText path="footer.monogram" as="span" />
         </Link>
 
         <div>
-          <p className={styles.colTitle}>{footer.hello.title}</p>
+          <EditableText path="footer.hello.title" as="p" className={styles.colTitle} />
           <div className={styles.col}>
-            <Link to="/about">{footer.hello.about}</Link>
-            <Link to="/contact">{footer.hello.contact}</Link>
+            <Link to={aboutTo}>
+              <EditableText path="footer.hello.about" as="span" />
+            </Link>
+            <Link to={contactTo}>
+              <EditableText path="footer.hello.contact" as="span" />
+            </Link>
             <a href={site.linkedin} target="_blank" rel="noreferrer">
-              {footer.hello.linkedin}
+              <EditableText path="footer.hello.linkedin" as="span" />
             </a>
-            <a href={`mailto:${site.email}`}>{footer.hello.email}</a>
+            <a href={site.fofUrl} target="_blank" rel="noreferrer">
+              <EditableText path="footer.hello.fof" as="span" />
+            </a>
+            <a href={`mailto:${site.email}`}>
+              <EditableText path="footer.hello.email" as="span" />
+            </a>
           </div>
         </div>
 
         <div>
-          <p className={styles.colTitle}>{footer.focus.title}</p>
+          <EditableText path="footer.focus.title" as="p" className={styles.colTitle} />
           <div className={styles.col}>
-            {footer.focus.items.map((item) => (
-              <span key={item}>{item}</span>
+            {footer.focus.items.map((_, index) => (
+              <EditableText key={index} path={`footer.focus.items.${index}`} as="span" />
             ))}
           </div>
         </div>
 
         <div>
-          <p className={styles.colTitle}>{footer.resources.title}</p>
+          <EditableText path="footer.resources.title" as="p" className={styles.colTitle} />
           <div className={styles.col}>
             <a href={site.cvEn} download>
-              {footer.resources.cvPdf}
+              <EditableText path="footer.resources.cvEn" as="span" />
             </a>
-            <a href={site.cvEnDocx} download>
-              {footer.resources.cvWordEn}
+            <a href={site.cvFr} download>
+              <EditableText path="footer.resources.cvFr" as="span" />
             </a>
-            <a href={site.cvFrDocx} download>
-              {footer.resources.cvWordFr}
-            </a>
-            <Link to="/work">{footer.resources.allWork}</Link>
+            <Link to={workTo}>
+              <EditableText path="footer.resources.allWork" as="span" />
+            </Link>
           </div>
         </div>
       </div>
 
       <div className={`container ${styles.bottom}`}>
         <p>
-          © {new Date().getFullYear()} {site.name}
+          © {new Date().getFullYear()}{' '}
+          <EditableText path="site.name" as="span" />
         </p>
         <div className={styles.socials}>
           <a href={site.linkedin} target="_blank" rel="noreferrer">
-            {footer.socials.linkedin}
+            <EditableText path="footer.socials.linkedin" as="span" />
           </a>
-          <a href={`mailto:${site.email}`}>{footer.socials.email}</a>
+          <a href={site.fofUrl} target="_blank" rel="noreferrer">
+            <EditableText path="footer.socials.fof" as="span" />
+          </a>
+          <a href={`mailto:${site.email}`}>
+            <EditableText path="footer.socials.email" as="span" />
+          </a>
         </div>
       </div>
     </footer>
