@@ -4,6 +4,7 @@ import { resolveMediaUrl } from '../api/client'
 import { EditableImageUrl, EditableText } from './editor/Editable'
 import { useContent } from '../context/ContentContext'
 import { useEditMode } from '../context/EditorContext'
+import { useProfileLens } from '../context/ProfileLensContext'
 import { fireEmojiBurst, getEmojiEffect } from '../lib/emojiBurst'
 import styles from './ScrollHighlightHero.module.css'
 
@@ -45,20 +46,31 @@ function tokenize(text: string): Token[] {
 export function ScrollHighlightHero() {
   const { hero } = useContent()
   const editMode = useEditMode()
+  const { displayLens, fading } = useProfileLens()
   const trackRef = useRef<HTMLElement>(null)
   const [progress, setProgress] = useState(0.08)
   const [spinning, setSpinning] = useState<Record<number, number>>({})
 
+  const restPath = displayLens === 'design' ? 'hero.restDesign' : 'hero.rest'
+  const restText = displayLens === 'design' ? hero.restDesign : hero.rest
+  if (typeof restText !== 'string') {
+    throw new Error(
+      displayLens === 'design'
+        ? 'hero.restDesign is missing from content'
+        : 'hero.rest is missing from content',
+    )
+  }
+
   const tokens = useMemo(() => {
     const leadTokens = tokenize(hero.lead)
-    const restTokens = tokenize(hero.rest)
+    const restTokens = tokenize(restText)
     return [
       ...leadTokens,
       { type: 'avatar' as const },
       { type: 'break' as const },
       ...restTokens,
     ]
-  }, [hero.lead, hero.rest])
+  }, [hero.lead, restText])
 
   const highlightableCount = useMemo(
     () => tokens.filter((t) => t.type === 'word' || t.type === 'emoji').length,
@@ -106,18 +118,20 @@ export function ScrollHighlightHero() {
     }
   }, [editMode])
 
+  const panelClass = fading ? `${styles.lensPanel} ${styles.lensPanelFading}` : styles.lensPanel
+
   if (editMode) {
     return (
       <section className={styles.track} aria-label="Introduction editor" style={{ height: 'auto' }}>
         <div className={styles.sticky} style={{ position: 'relative', minHeight: 'auto' }}>
-          <div className="container">
+          <div className={`container ${panelClass}`}>
             <div className={styles.heroType}>
               <EditableText path="hero.lead" as="p" multiline />
               <span className={styles.avatarPill}>
                 <EditableImageUrl path="hero.avatarImage" className={styles.avatarImg} />
               </span>
               <br />
-              <EditableText path="hero.rest" as="p" multiline />
+              <EditableText path={restPath} as="p" multiline />
             </div>
           </div>
         </div>
@@ -150,7 +164,7 @@ export function ScrollHighlightHero() {
   return (
     <section ref={trackRef} className={styles.track} aria-label="Introduction">
       <div className={styles.sticky}>
-        <div className="container">
+        <div className={`container ${panelClass}`}>
           <h1 className={styles.heroType}>
             {tokens.map((token, index) => {
               if (token.type === 'space') {

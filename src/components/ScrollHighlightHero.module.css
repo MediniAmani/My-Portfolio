@@ -12,6 +12,24 @@
   padding-block: clamp(3.5rem, 9vw, 6.5rem);
 }
 
+.lensPanel {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  transition:
+    opacity 0.32s ease,
+    transform 0.32s ease,
+    filter 0.32s ease;
+  width: 100%;
+}
+
+.lensPanelFading {
+  opacity: 0;
+  transform: translateY(0.35rem);
+  filter: blur(4px);
+  pointer-events: none;
+}
+
 .heroType {
   margin: 0;
   font-family: var(--font-sans);
@@ -140,6 +158,13 @@
   .sticky {
     position: relative;
     min-height: auto;
+  }
+
+  .lensPanel,
+  .lensPanelFading {
+    transition: none;
+    filter: none;
+    transform: none;
   }
 
   .muted {

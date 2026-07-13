@@ -66,6 +66,7 @@ export type PortfolioContent = {
   hero: {
     lead: string
     rest: string
+    restDesign: string
     avatarImage: string
   }
   home: {
@@ -75,10 +76,14 @@ export type PortfolioContent = {
       title: string
       subtitle: string
       relatedSlug: string
+      titleDesign: string
+      subtitleDesign: string
+      relatedSlugDesign: string
     }
     resourcesTitlePrefix: string
     rotatingAudiences: string[]
     darkHeadline: string
+    darkHeadlineDesign: string
     features: { to: string; label: string; title: string; cta: string; image: string }[]
     communityCard: {
       eyebrow: string
@@ -89,6 +94,7 @@ export type PortfolioContent = {
     }
     highlightsTitle: string
     highlightsLead: string
+    highlightsLeadDesign: string
     cvCtaEn: string
     cvCtaFr: string
     contactCta: string
@@ -97,6 +103,7 @@ export type PortfolioContent = {
     hint: string
     dataLabel: string
     designLabel: string
+    defaultLens: 'data' | 'design'
   }
   aboutPage: {
     title: string

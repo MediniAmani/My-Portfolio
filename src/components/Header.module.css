@@ -11,7 +11,28 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
+}
+
+.centerControls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.rightControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lensDesktop {
+  display: none;
+}
+
+.lensMobile {
+  display: block;
 }
 
 .logo {
@@ -21,6 +42,7 @@
   height: 3rem;
   border-radius: 999px;
   background: transparent;
+  flex-shrink: 0;
 }
 
 .monogram {
@@ -161,6 +183,11 @@
     display: flex;
   }
 
+  .lensDesktop {
+    display: block;
+  }
+
+  .lensMobile,
   .menuBtn,
   .mobile {
     display: none;

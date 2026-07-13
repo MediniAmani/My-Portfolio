@@ -1,4 +1,3 @@
-import { ProfileLensToggle } from '../components/ProfileLensToggle'
 import { EditableText, ListItemControls, AddSlot } from '../components/editor/Editable'
 import { useContent } from '../context/ContentContext'
 import { useEditor } from '../context/EditorContext'
@@ -29,7 +28,6 @@ export function About() {
     <div className="section">
       <div className="container-narrow">
         <EditableText path="aboutPage.title" as="h1" className={`${styles.title} fade-up`} />
-        <ProfileLensToggle />
 
         <div className={panelClass} aria-busy={fading}>
           {showData ? (

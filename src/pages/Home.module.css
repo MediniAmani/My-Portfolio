@@ -59,6 +59,32 @@
   margin: 0.25rem auto 0;
 }
 
+.lensPanel {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  transition:
+    opacity 0.32s ease,
+    transform 0.32s ease,
+    filter 0.32s ease;
+}
+
+.lensPanelFading {
+  opacity: 0;
+  transform: translateY(0.45rem);
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lensPanel,
+  .lensPanelFading {
+    transition: none;
+    filter: none;
+    transform: none;
+  }
+}
+
 .bannerVisual:hover [data-admin-hotspot],
 .bannerVisual:focus-within [data-admin-hotspot],
 .featureCard:hover [data-admin-hotspot],
@@ -588,11 +614,16 @@
 .fofLink {
   display: inline-flex;
   margin-top: 0.85rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: #fff;
+  font: inherit;
   font-size: 0.85rem;
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 0.2em;
+  cursor: pointer;
 }
 
 .floatingChip {

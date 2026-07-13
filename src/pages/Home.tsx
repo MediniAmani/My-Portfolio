@@ -5,6 +5,11 @@ import { ScrollHighlightHero } from '../components/ScrollHighlightHero'
 import { SkyMagicWand } from '../components/SkyMagicWand'
 import { useContent } from '../context/ContentContext'
 import { useEditMode, useEditor, useEditorLink } from '../context/EditorContext'
+import {
+  isDataCategory,
+  isDesignCategory,
+  useProfileLens,
+} from '../context/ProfileLensContext'
 import styles from './Home.module.css'
 
 function ProjectCard({ index, slug }: { index: number; slug: string }) {
@@ -183,15 +188,17 @@ function CommunityFeatureMockup({ chipCount }: { chipCount: number }) {
         <EditableText path="home.communityCard.title" as="h4" />
         <EditableText path="home.communityCard.meta" as="p" className={styles.posterMeta} />
         <EditableText path="home.communityCard.badge" as="div" className={styles.posterBadge} />
-        <a
+        <button
+          type="button"
           className={styles.fofLink}
-          href={site.fofUrl}
-          target="_blank"
-          rel="noreferrer"
-          onClick={(event) => event.stopPropagation()}
+          onClick={(event) => {
+            event.preventDefault()
+            event.stopPropagation()
+            window.open(site.fofUrl, '_blank', 'noopener,noreferrer')
+          }}
         >
           <EditableText path="site.fofLabel" as="span" />
-        </a>
+        </button>
       </div>
       <div className={styles.chipRow}>
         {Array.from({ length: chipCount }, (_, index) => (
@@ -225,154 +232,299 @@ export function Home() {
   const { home, projects, highlights, site } = useContent()
   const editor = useEditor()
   const navigate = useNavigate()
+  const { displayLens, fading } = useProfileLens()
   const featureWork = home.features[0]
   const featureAbout = home.features[1]
   const contactTo = useEditorLink('/contact')
+  const isDesign = displayLens === 'design'
+  const panelClass = fading ? `${styles.lensPanel} ${styles.lensPanelFading}` : styles.lensPanel
 
   if (!featureWork || !featureAbout) {
     throw new Error('home.features must contain at least two feature cards')
+  }
+
+  const visibleProjects = projects
+    .map((project, index) => ({ project, index }))
+    .filter(({ project }) =>
+      isDesign ? isDesignCategory(project.category) : isDataCategory(project.category),
+    )
+
+  const visibleHighlights = highlights
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) => {
+      const project = projects.find((entry) => entry.slug === item.slug)
+      if (!project) {
+        throw new Error(`Highlight slug has no matching project: ${item.slug}`)
+      }
+      return isDesign
+        ? isDesignCategory(project.category)
+        : isDataCategory(project.category)
+    })
+
+  const bannerRelatedSlug = isDesign
+    ? home.banner.relatedSlugDesign
+    : home.banner.relatedSlug
+  if (typeof bannerRelatedSlug !== 'string') {
+    throw new Error(
+      isDesign
+        ? 'home.banner.relatedSlugDesign is missing from content'
+        : 'home.banner.relatedSlug is missing from content',
+    )
+  }
+  const bannerTitlePath = isDesign ? 'home.banner.titleDesign' : 'home.banner.title'
+  const bannerSubtitlePath = isDesign ? 'home.banner.subtitleDesign' : 'home.banner.subtitle'
+  const bannerSlugPath = isDesign
+    ? 'home.banner.relatedSlugDesign'
+    : 'home.banner.relatedSlug'
+  const darkHeadlinePath = isDesign ? 'home.darkHeadlineDesign' : 'home.darkHeadline'
+  const highlightsLeadPath = isDesign ? 'home.highlightsLeadDesign' : 'home.highlightsLead'
+
+  if (isDesign) {
+    if (typeof home.banner.titleDesign !== 'string') {
+      throw new Error('home.banner.titleDesign is missing from content')
+    }
+    if (typeof home.banner.subtitleDesign !== 'string') {
+      throw new Error('home.banner.subtitleDesign is missing from content')
+    }
+    if (typeof home.darkHeadlineDesign !== 'string') {
+      throw new Error('home.darkHeadlineDesign is missing from content')
+    }
+    if (typeof home.highlightsLeadDesign !== 'string') {
+      throw new Error('home.highlightsLeadDesign is missing from content')
+    }
   }
 
   return (
     <>
       <ScrollHighlightHero />
 
-      <section className={styles.banner} aria-label="Featured atmosphere">
-        <div className={`${styles.bannerVisual} fade-up-delay-2`}>
-          <EditableImageUrl path="home.banner.image" alt={home.banner.alt} className={styles.bannerImg} />
-          <div className={styles.bannerScrim} />
-          <div className={styles.bannerCaption}>
-            <EditableText path="home.banner.title" as="p" />
-            <EditableText path="home.banner.subtitle" as="span" />
-          </div>
-          <AdminArticleHotspot
-            articlePath={
-              home.banner.relatedSlug.trim()
-                ? `/work/${home.banner.relatedSlug.trim()}`
-                : null
-            }
-            relatedSlugPath="home.banner.relatedSlug"
-            openLabel="Open related article"
-          />
-        </div>
-      </section>
-
-      <section className={`section ${styles.resources}`}>
-        <div className="container">
-          <h2 className={styles.resourcesTitle}>
-            <EditableText path="home.resourcesTitlePrefix" as="span" />{' '}
-            {editor ? (
-              <span className={styles.audienceLivePreview}>
-                {home.rotatingAudiences[0] ?? '…'}
-              </span>
-            ) : (
-              <AudienceRotator items={home.rotatingAudiences} />
-            )}
-          </h2>
-          {editor ? (
-            <div className={styles.audienceEditor}>
-              {home.rotatingAudiences.map((_, index) => (
-                <ListItemControls
-                  key={index}
-                  arrayPath="home.rotatingAudiences"
-                  index={index}
-                  layout="inline"
-                >
-                  <EditableText
-                    path={`home.rotatingAudiences.${index}`}
-                    as="span"
-                    className={styles.audienceChip}
-                  />
-                </ListItemControls>
-              ))}
-              <AddSlot label="Add audience" variant="inline" onAdd={() => editor.addAudience()} />
+      <div className={panelClass} aria-busy={fading}>
+        <section className={styles.banner} aria-label="Featured atmosphere">
+          <div className={`${styles.bannerVisual} fade-up-delay-2`}>
+            <EditableImageUrl
+              path="home.banner.image"
+              alt={home.banner.alt}
+              className={styles.bannerImg}
+            />
+            <div className={styles.bannerScrim} />
+            <div className={styles.bannerCaption}>
+              <EditableText path={bannerTitlePath} as="p" />
+              <EditableText path={bannerSubtitlePath} as="span" />
             </div>
-          ) : null}
+            <AdminArticleHotspot
+              articlePath={
+                bannerRelatedSlug.trim() ? `/work/${bannerRelatedSlug.trim()}` : null
+              }
+              relatedSlugPath={bannerSlugPath}
+              openLabel="Open related article"
+            />
+          </div>
+        </section>
 
-          <div className={styles.resourceGrid}>
-            {projects.map((project, index) => (
-              <ProjectCard key={project.slug} index={index} slug={project.slug} />
-            ))}
+        <section className={`section ${styles.resources}`}>
+          <div className="container">
+            <h2 className={styles.resourcesTitle}>
+              <EditableText path="home.resourcesTitlePrefix" as="span" />{' '}
+              {editor ? (
+                <span className={styles.audienceLivePreview}>
+                  {home.rotatingAudiences[0]}
+                </span>
+              ) : (
+                <AudienceRotator items={home.rotatingAudiences} />
+              )}
+            </h2>
             {editor ? (
-              <AddSlot
-                label="Add project"
-                onAdd={() => {
-                  const slug = editor.addProject()
-                  navigate(`/admin/work/${slug}`)
-                }}
-              />
+              <div className={styles.audienceEditor}>
+                {home.rotatingAudiences.map((_, index) => (
+                  <ListItemControls
+                    key={index}
+                    arrayPath="home.rotatingAudiences"
+                    index={index}
+                    layout="inline"
+                  >
+                    <EditableText
+                      path={`home.rotatingAudiences.${index}`}
+                      as="span"
+                      className={styles.audienceChip}
+                    />
+                  </ListItemControls>
+                ))}
+                <AddSlot label="Add audience" variant="inline" onAdd={() => editor.addAudience()} />
+              </div>
             ) : null}
-          </div>
-        </div>
-      </section>
 
-      <SkyMagicWand className={styles.darkBand}>
-        <div className={styles.stars} aria-hidden="true" />
-        <div className={`container ${styles.darkInner}`}>
-          <EditableText path="home.darkHeadline" as="h2" className={styles.darkHeadline} multiline />
-
-          <div className={styles.featureGrid}>
-            <FeatureLink to={featureWork.to} className={styles.featureCard}>
-              <div className={styles.featureCopy}>
-                <EditableText path="home.features.0.label" as="p" className={styles.featureLabel} />
-                <EditableText path="home.features.0.title" as="h3" multiline />
-                <EditableText path="home.features.0.cta" as="span" className={styles.featureCta} />
-              </div>
-              <EditableImageUrl
-                path="home.features.0.image"
-                className={styles.featureImage}
-                allowClear
-                placeholder={<WorkFeatureMockup />}
-              />
-              <AdminArticleHotspot articlePath={featureWork.to} openLabel="Open linked page" />
-            </FeatureLink>
-
-            <FeatureLink to={featureAbout.to} className={styles.featureCard}>
-              <div className={styles.featureCopy}>
-                <EditableText path="home.features.1.label" as="p" className={styles.featureLabel} />
-                <EditableText path="home.features.1.title" as="h3" multiline />
-                <EditableText path="home.features.1.cta" as="span" className={styles.featureCta} />
-              </div>
-              <EditableImageUrl
-                path="home.features.1.image"
-                className={styles.featureImage}
-                allowClear
-                placeholder={<CommunityFeatureMockup chipCount={home.communityCard.chips.length} />}
-              />
-              <AdminArticleHotspot articlePath={featureAbout.to} openLabel="Open linked page" />
-            </FeatureLink>
-          </div>
-        </div>
-      </SkyMagicWand>
-
-      <section className={`section ${styles.guides}`}>
-        <div className="container">
-          <div className={styles.guidesHeader}>
-            <div>
-              <EditableText path="home.highlightsTitle" as="h2" className={styles.guidesTitle} />
-              <EditableText path="home.highlightsLead" as="p" className={styles.guidesLead} multiline />
-            </div>
-            <div className={styles.guideActions}>
-              <a className="btn" href={site.cvEn} download>
-                <EditableText path="home.cvCtaEn" as="span" />
-              </a>
-              <a className="btn btn-ghost" href={site.cvFr} download>
-                <EditableText path="home.cvCtaFr" as="span" />
-              </a>
-              <Link className="btn btn-ghost" to={contactTo}>
-                <EditableText path="home.contactCta" as="span" />
-              </Link>
+            <div className={styles.resourceGrid}>
+              {visibleProjects.map(({ project, index }) => (
+                <ProjectCard key={project.slug} index={index} slug={project.slug} />
+              ))}
+              {editor ? (
+                <AddSlot
+                  label="Add project"
+                  onAdd={() => {
+                    const slug = editor.addProject()
+                    navigate(`/admin/work/${slug}`)
+                  }}
+                />
+              ) : null}
             </div>
           </div>
+        </section>
 
-          <div className={styles.guideGrid}>
-            {highlights.map((item, index) => (
-              <HighlightCard key={`${item.slug}-${index}`} index={index} slug={item.slug} />
-            ))}
-            {editor ? <AddSlot label="Add highlight" onAdd={() => editor.addHighlight()} /> : null}
+        <SkyMagicWand className={styles.darkBand}>
+          <div className={styles.stars} aria-hidden="true" />
+          <div className={`container ${styles.darkInner}`}>
+            <EditableText path={darkHeadlinePath} as="h2" className={styles.darkHeadline} multiline />
+
+            <div className={styles.featureGrid}>
+              {isDesign ? (
+                <>
+                  <FeatureLink to={featureAbout.to} className={styles.featureCard}>
+                    <div className={styles.featureCopy}>
+                      <EditableText
+                        path="home.features.1.label"
+                        as="p"
+                        className={styles.featureLabel}
+                      />
+                      <EditableText path="home.features.1.title" as="h3" multiline />
+                      <EditableText
+                        path="home.features.1.cta"
+                        as="span"
+                        className={styles.featureCta}
+                      />
+                    </div>
+                    <EditableImageUrl
+                      path="home.features.1.image"
+                      className={styles.featureImage}
+                      allowClear
+                      placeholder={
+                        <CommunityFeatureMockup chipCount={home.communityCard.chips.length} />
+                      }
+                    />
+                    <AdminArticleHotspot
+                      articlePath={featureAbout.to}
+                      openLabel="Open linked page"
+                    />
+                  </FeatureLink>
+                  <FeatureLink to={featureWork.to} className={styles.featureCard}>
+                    <div className={styles.featureCopy}>
+                      <EditableText
+                        path="home.features.0.label"
+                        as="p"
+                        className={styles.featureLabel}
+                      />
+                      <EditableText path="home.features.0.title" as="h3" multiline />
+                      <EditableText
+                        path="home.features.0.cta"
+                        as="span"
+                        className={styles.featureCta}
+                      />
+                    </div>
+                    <EditableImageUrl
+                      path="home.features.0.image"
+                      className={styles.featureImage}
+                      allowClear
+                      placeholder={<WorkFeatureMockup />}
+                    />
+                    <AdminArticleHotspot
+                      articlePath={featureWork.to}
+                      openLabel="Open linked page"
+                    />
+                  </FeatureLink>
+                </>
+              ) : (
+                <>
+                  <FeatureLink to={featureWork.to} className={styles.featureCard}>
+                    <div className={styles.featureCopy}>
+                      <EditableText
+                        path="home.features.0.label"
+                        as="p"
+                        className={styles.featureLabel}
+                      />
+                      <EditableText path="home.features.0.title" as="h3" multiline />
+                      <EditableText
+                        path="home.features.0.cta"
+                        as="span"
+                        className={styles.featureCta}
+                      />
+                    </div>
+                    <EditableImageUrl
+                      path="home.features.0.image"
+                      className={styles.featureImage}
+                      allowClear
+                      placeholder={<WorkFeatureMockup />}
+                    />
+                    <AdminArticleHotspot
+                      articlePath={featureWork.to}
+                      openLabel="Open linked page"
+                    />
+                  </FeatureLink>
+                  <FeatureLink to={featureAbout.to} className={styles.featureCard}>
+                    <div className={styles.featureCopy}>
+                      <EditableText
+                        path="home.features.1.label"
+                        as="p"
+                        className={styles.featureLabel}
+                      />
+                      <EditableText path="home.features.1.title" as="h3" multiline />
+                      <EditableText
+                        path="home.features.1.cta"
+                        as="span"
+                        className={styles.featureCta}
+                      />
+                    </div>
+                    <EditableImageUrl
+                      path="home.features.1.image"
+                      className={styles.featureImage}
+                      allowClear
+                      placeholder={
+                        <CommunityFeatureMockup chipCount={home.communityCard.chips.length} />
+                      }
+                    />
+                    <AdminArticleHotspot
+                      articlePath={featureAbout.to}
+                      openLabel="Open linked page"
+                    />
+                  </FeatureLink>
+                </>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </SkyMagicWand>
+
+        <section className={`section ${styles.guides}`}>
+          <div className="container">
+            <div className={styles.guidesHeader}>
+              <div>
+                <EditableText path="home.highlightsTitle" as="h2" className={styles.guidesTitle} />
+                <EditableText
+                  path={highlightsLeadPath}
+                  as="p"
+                  className={styles.guidesLead}
+                  multiline
+                />
+              </div>
+              <div className={styles.guideActions}>
+                <a className="btn" href={site.cvEn} download>
+                  <EditableText path="home.cvCtaEn" as="span" />
+                </a>
+                <a className="btn btn-ghost" href={site.cvFr} download>
+                  <EditableText path="home.cvCtaFr" as="span" />
+                </a>
+                <Link className="btn btn-ghost" to={contactTo}>
+                  <EditableText path="home.contactCta" as="span" />
+                </Link>
+              </div>
+            </div>
+
+            <div className={styles.guideGrid}>
+              {visibleHighlights.map(({ item, index }) => (
+                <HighlightCard key={`${item.slug}-${index}`} index={index} slug={item.slug} />
+              ))}
+              {editor ? <AddSlot label="Add highlight" onAdd={() => editor.addHighlight()} /> : null}
+            </div>
+          </div>
+        </section>
+      </div>
     </>
   )
 }

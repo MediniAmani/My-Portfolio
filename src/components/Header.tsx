@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { EditableText } from './editor/Editable'
+import { ProfileLensToggle } from './ProfileLensToggle'
 import { useContent } from '../context/ContentContext'
 import { useEditMode, useEditorLink } from '../context/EditorContext'
 import styles from './Header.module.css'
@@ -57,42 +58,48 @@ export function Header() {
           <EditableText path="nav.monogram" as="span" className={styles.monogram} />
         </EditorNavLink>
 
-        <nav className={styles.pill} aria-label="Primary">
-          {nav.links.map((link, index) => (
-            <EditorNavLink
-              key={link.to}
-              to={link.to}
-              className={({ isActive }) => `${styles.pillLink} ${isActive ? styles.active : ''}`}
-            >
-              <EditableText path={`nav.links.${index}.label`} as="span" />
-            </EditorNavLink>
-          ))}
-          <a href={site.cvEn} className={styles.pillLink} download>
-            <EditableText path="nav.cvEnLabel" as="span" />
-          </a>
-          <a href={site.cvFr} className={styles.pillLink} download>
-            <EditableText path="nav.cvFrLabel" as="span" />
-          </a>
-          <a href={site.linkedin} className={styles.pillLink} target="_blank" rel="noreferrer">
-            <EditableText path="nav.linkedinLabel" as="span" />
-          </a>
-          {!contactAlreadyLinked ? (
-            <EditorNavLink to="/contact" className={styles.pillCta}>
-              <EditableText path="nav.moreLabel" as="span" />
-            </EditorNavLink>
-          ) : null}
-        </nav>
+        <div className={styles.centerControls}>
+          <ProfileLensToggle variant="header" className={styles.lensDesktop} />
+          <nav className={styles.pill} aria-label="Primary">
+            {nav.links.map((link, index) => (
+              <EditorNavLink
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) => `${styles.pillLink} ${isActive ? styles.active : ''}`}
+              >
+                <EditableText path={`nav.links.${index}.label`} as="span" />
+              </EditorNavLink>
+            ))}
+            <a href={site.cvEn} className={styles.pillLink} download>
+              <EditableText path="nav.cvEnLabel" as="span" />
+            </a>
+            <a href={site.cvFr} className={styles.pillLink} download>
+              <EditableText path="nav.cvFrLabel" as="span" />
+            </a>
+            <a href={site.linkedin} className={styles.pillLink} target="_blank" rel="noreferrer">
+              <EditableText path="nav.linkedinLabel" as="span" />
+            </a>
+            {!contactAlreadyLinked ? (
+              <EditorNavLink to="/contact" className={styles.pillCta}>
+                <EditableText path="nav.moreLabel" as="span" />
+              </EditorNavLink>
+            ) : null}
+          </nav>
+        </div>
 
-        <button
-          type="button"
-          className={styles.menuBtn}
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          onClick={() => setOpen((v) => !v)}
-        >
-          <span className="sr-only">{open ? 'Close menu' : 'Open menu'}</span>
-          <span className={`${styles.burger} ${open ? styles.burgerOpen : ''}`} />
-        </button>
+        <div className={styles.rightControls}>
+          <ProfileLensToggle variant="header" className={styles.lensMobile} />
+          <button
+            type="button"
+            className={styles.menuBtn}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span className="sr-only">{open ? 'Close menu' : 'Open menu'}</span>
+            <span className={`${styles.burger} ${open ? styles.burgerOpen : ''}`} />
+          </button>
+        </div>
       </div>
 
       <div
@@ -100,10 +107,7 @@ export function Header() {
         className={`${styles.mobile} ${open ? styles.mobileOpen : ''}`}
         onClick={() => setOpen(false)}
       >
-        <div
-          className={styles.mobilePanel}
-          onClick={(event) => event.stopPropagation()}
-        >
+        <div className={styles.mobilePanel} onClick={(event) => event.stopPropagation()}>
           <EditorNavLink to="/" onClick={() => setOpen(false)}>
             <EditableText path="nav.homeLabel" as="span" />
           </EditorNavLink>

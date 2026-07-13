@@ -1,5 +1,4 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { ProfileLensToggle } from '../components/ProfileLensToggle'
 import { AddSlot, EditableImageUrl, EditableText, ListItemControls } from '../components/editor/Editable'
 import { useContent } from '../context/ContentContext'
 import { useEditMode, useEditor, useEditorLink } from '../context/EditorContext'
@@ -58,7 +57,6 @@ export function Work() {
       <div className="container">
         <div className={styles.header}>
           <EditableText path="workPage.title" as="h1" className={`${styles.title} fade-up`} />
-          <ProfileLensToggle />
         </div>
 
         <div className={panelClass} aria-busy={fading}>
