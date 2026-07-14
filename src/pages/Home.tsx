@@ -298,7 +298,7 @@ export function Home() {
     <>
       <ScrollHighlightHero />
 
-      <div className={panelClass} aria-busy={fading}>
+      <div className={`${styles.afterHero} ${panelClass}`} aria-busy={fading}>
         <section className={styles.banner} aria-label="Featured atmosphere">
           <div className={`${styles.bannerVisual} fade-up-delay-2`}>
             <EditableImageUrl
