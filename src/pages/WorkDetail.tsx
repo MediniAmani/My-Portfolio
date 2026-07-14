@@ -8,13 +8,31 @@ import styles from './WorkDetail.module.css'
 type TocItem = { id: string; label: string }
 
 function splitParagraphs(body: string): string[] {
-  return body
+  // CMS/seed sometimes stores escaped newlines as the two characters "\n".
+  const normalized = body.replace(/\\n/g, '\n')
+  return normalized
     .split(/\n\s*\n/)
     .map((part) => part.trim())
     .filter(Boolean)
 }
 
-function shotClass(index: number): string {
+function renderParagraph(text: string, key: string) {
+  const match = text.match(/^(PROBLEM|EXAMPLE|IMPACT|JOB TO BE DONE)\s+[—-]\s+([\s\S]+)$/i)
+  if (!match) {
+    return <p key={key}>{text}</p>
+  }
+  return (
+    <p key={key}>
+      <span className={styles.beatLabel}>{match[1]}</span>
+      {match[2]}
+    </p>
+  )
+}
+
+function shotClass(index: number, src = ''): string {
+  if (src.includes('-strip') || src.includes('Strip')) {
+    return styles.shotStrip
+  }
   const variants = [styles.shotWide, styles.shotTiltLeft, styles.shotTiltRight, styles.shotBleed]
   return variants[index % variants.length]
 }
@@ -221,12 +239,52 @@ export function WorkDetail() {
                     >
                       {editor ? (
                         <div className={styles.sectionHead}>
-                          <EditableText path={`${base}.sections.${sectionIndex}.title`} as="h2" />
-                          <ListItemControls arrayPath={`${base}.sections`} index={sectionIndex}>
-                            <span className={styles.sectionKey}>
-                              <EditableText path={`${base}.sections.${sectionIndex}.key`} as="span" />
-                            </span>
-                          </ListItemControls>
+                          <div className={styles.sectionTitleRow}>
+                            <EditableText path={`${base}.sections.${sectionIndex}.title`} as="h2" />
+                            <ListItemControls
+                              arrayPath={`${base}.sections`}
+                              index={sectionIndex}
+                              layout="inline"
+                            >
+                              <span className={styles.sectionKey}>
+                                <EditableText path={`${base}.sections.${sectionIndex}.key`} as="span" />
+                              </span>
+                            </ListItemControls>
+                          </div>
+                          <div
+                            className={styles.layoutPicker}
+                            role="group"
+                            aria-label={workPage.sectionLayoutLabel}
+                          >
+                            <button
+                              type="button"
+                              className={
+                                section.layout === 'stack'
+                                  ? `${styles.layoutOption} ${styles.layoutOptionActive}`
+                                  : styles.layoutOption
+                              }
+                              aria-pressed={section.layout === 'stack'}
+                              onClick={() =>
+                                editor.setPath(`${base}.sections.${sectionIndex}.layout`, 'stack')
+                              }
+                            >
+                              {workPage.sectionLayoutStack}
+                            </button>
+                            <button
+                              type="button"
+                              className={
+                                section.layout === 'split'
+                                  ? `${styles.layoutOption} ${styles.layoutOptionActive}`
+                                  : styles.layoutOption
+                              }
+                              aria-pressed={section.layout === 'split'}
+                              onClick={() =>
+                                editor.setPath(`${base}.sections.${sectionIndex}.layout`, 'split')
+                              }
+                            >
+                              {workPage.sectionLayoutSplit}
+                            </button>
+                          </div>
                         </div>
                       ) : (
                         <h2 className={styles.chapterTitle}>{section.title}</h2>
@@ -242,7 +300,7 @@ export function WorkDetail() {
                                 arrayPath={`${base}.sections.${sectionIndex}.images`}
                                 index={imageIndex}
                               >
-                                <figure className={`${styles.shot} ${shotClass(imageIndex)}`}>
+                                <figure className={`${styles.shot} ${shotClass(imageIndex, image.src)}`}>
                                   {image.src ? (
                                     <EditableImageUrl
                                       path={`${base}.sections.${sectionIndex}.images.${imageIndex}.src`}
@@ -272,17 +330,38 @@ export function WorkDetail() {
                           />
                         </>
                       ) : (
-                        Array.from({ length: steps }, (_, step) => (
-                          <div key={step} className={styles.beat}>
-                            {paragraphs[step] ? <p>{paragraphs[step]}</p> : null}
-                            {images[step] ? (
-                              <figure className={`${styles.shot} ${shotClass(step)}`}>
-                                <img src={resolveMediaUrl(images[step].src)} alt={images[step].alt} />
-                                {images[step].caption ? <figcaption>{images[step].caption}</figcaption> : null}
-                              </figure>
-                            ) : null}
-                          </div>
-                        ))
+                        Array.from({ length: steps }, (_, step) => {
+                          const paragraph = paragraphs[step]
+                          const image = images[step]
+                          const useSplit =
+                            section.layout === 'split' && Boolean(paragraph) && Boolean(image)
+
+                          if (useSplit && image && paragraph) {
+                            return (
+                              <div key={step} className={styles.beatSplit}>
+                                <figure className={`${styles.shot} ${styles.shotSplit}`}>
+                                  <img src={resolveMediaUrl(image.src)} alt={image.alt} />
+                                  {image.caption ? <figcaption>{image.caption}</figcaption> : null}
+                                </figure>
+                                <div className={styles.beatCopy}>
+                                  {renderParagraph(paragraph, `p-${step}`)}
+                                </div>
+                              </div>
+                            )
+                          }
+
+                          return (
+                            <div key={step} className={styles.beat}>
+                              {paragraph ? renderParagraph(paragraph, `p-${step}`) : null}
+                              {image ? (
+                                <figure className={`${styles.shot} ${shotClass(step, image.src)}`}>
+                                  <img src={resolveMediaUrl(image.src)} alt={image.alt} />
+                                  {image.caption ? <figcaption>{image.caption}</figcaption> : null}
+                                </figure>
+                              ) : null}
+                            </div>
+                          )
+                        })
                       )}
                     </section>
                   )

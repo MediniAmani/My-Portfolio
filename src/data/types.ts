@@ -10,10 +10,13 @@ export type CaseImage = {
   caption: string
 }
 
+export type CaseSectionLayout = 'stack' | 'split'
+
 export type CaseSection = {
   key: string
   title: string
   body: string
+  layout: CaseSectionLayout
   images: CaseImage[]
 }
 
@@ -186,6 +189,9 @@ export type PortfolioContent = {
     addMetric: string
     addSection: string
     addSectionImage: string
+    sectionLayoutLabel: string
+    sectionLayoutStack: string
+    sectionLayoutSplit: string
     moreProjects: string
     discuss: string
   }

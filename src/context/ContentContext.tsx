@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { fetchContent } from '../api/client'
-import type { PortfolioContent } from '../data/types'
+import type { CaseSectionLayout, PortfolioContent } from '../data/types'
 
 export type ContentContextValue = {
   content: PortfolioContent
@@ -30,6 +30,48 @@ export function isPortfolioContent(value: unknown): value is PortfolioContent {
   )
 }
 
+/** Turn stored "\\n" sequences into real newlines for display and editing. */
+function normalizeEscapedNewlines(value: unknown): unknown {
+  if (typeof value === 'string') {
+    return value.includes('\\n') ? value.replace(/\\n/g, '\n') : value
+  }
+  if (Array.isArray(value)) {
+    return value.map(normalizeEscapedNewlines)
+  }
+  if (value && typeof value === 'object') {
+    const next: Record<string, unknown> = {}
+    for (const [key, child] of Object.entries(value)) {
+      next[key] = normalizeEscapedNewlines(child)
+    }
+    return next
+  }
+  return value
+}
+
+function isCaseSectionLayout(value: unknown): value is CaseSectionLayout {
+  return value === 'stack' || value === 'split'
+}
+
+/** Bring older CMS payloads up to the current case-study schema. */
+function migratePortfolioContent(data: PortfolioContent): PortfolioContent {
+  const workPage = {
+    ...data.workPage,
+    sectionLayoutLabel: data.workPage.sectionLayoutLabel ?? 'Chapter layout',
+    sectionLayoutStack: data.workPage.sectionLayoutStack ?? 'Stacked',
+    sectionLayoutSplit: data.workPage.sectionLayoutSplit ?? 'Side by side',
+  }
+
+  const projects = data.projects.map((project) => ({
+    ...project,
+    sections: project.sections.map((section) => ({
+      ...section,
+      layout: isCaseSectionLayout(section.layout) ? section.layout : 'stack',
+    })),
+  }))
+
+  return { ...data, workPage, projects }
+}
+
 export function ContentProvider({ children }: { children: ReactNode }) {
   const [content, setContent] = useState<PortfolioContent | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -42,7 +84,8 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     if (!isPortfolioContent(data)) {
       throw new Error('API returned unexpected content shape')
     }
-    setContent(data)
+    const normalized = normalizeEscapedNewlines(data) as PortfolioContent
+    setContent(migratePortfolioContent(normalized))
     setLoading(false)
   }, [])
 
