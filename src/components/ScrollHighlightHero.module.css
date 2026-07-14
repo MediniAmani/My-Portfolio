@@ -1,8 +1,8 @@
 .track {
   position: relative;
   z-index: 0;
-  /* svh keeps scroll distance aligned with sticky height on mobile browsers */
-  height: 220svh;
+  /* ~1 viewport of sticky runway after the pin itself */
+  height: 200svh;
 }
 
 .sticky {
@@ -24,8 +24,8 @@
 
 @media (max-width: 768px) {
   .track {
-    /* Longer runway so the reveal keeps pace with touch scrolling */
-    height: 280svh;
+    /* Short runway: reveal finishes as the lower section starts covering */
+    height: 170svh;
   }
 
   .sticky {
