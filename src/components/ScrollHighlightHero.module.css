@@ -1,6 +1,7 @@
 .track {
   position: relative;
-  height: 220vh;
+  /* svh keeps scroll distance aligned with sticky height on mobile browsers */
+  height: 220svh;
 }
 
 .sticky {
@@ -10,6 +11,25 @@
   display: flex;
   align-items: center;
   padding-block: clamp(3.5rem, 9vw, 6.5rem);
+}
+
+@media (max-width: 768px) {
+  .track {
+    /* Longer runway so the reveal keeps pace with touch scrolling */
+    height: 280svh;
+  }
+
+  .sticky {
+    /* Sit below the sticky site header so words are not clipped mid-reveal */
+    top: var(--header-h);
+    min-height: calc(100svh - var(--header-h));
+    padding-block: clamp(1.25rem, 5vw, 2.5rem);
+  }
+
+  .heroType {
+    font-size: clamp(1.65rem, 7.2vw, 2.35rem);
+    line-height: 1.4;
+  }
 }
 
 .lensPanel {

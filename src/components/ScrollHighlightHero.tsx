@@ -91,14 +91,28 @@ export function ScrollHighlightHero() {
 
     let frame = 0
 
+    // Prefer layout viewport height over innerHeight so iOS/Android URL-bar
+    // show/hide does not constantly rewrite the scroll distance mid-gesture.
+    const viewportHeight = () => {
+      const visual = window.visualViewport?.height
+      const layout = document.documentElement.clientHeight
+      if (typeof visual === 'number' && visual > 0) {
+        return Math.min(visual, layout || visual)
+      }
+      return layout || window.innerHeight
+    }
+
     const update = () => {
       frame = 0
       const rect = track.getBoundingClientRect()
-      const total = rect.height - window.innerHeight
-      if (total <= 0) {
+      const trackHeight = track.offsetHeight
+      const viewH = viewportHeight()
+      const total = trackHeight - viewH
+      if (total <= 1) {
         setProgress(1)
         return
       }
+      // Clamp with a tiny epsilon so the last words fully settle on mobile.
       const raw = -rect.top / total
       setProgress(Math.min(1, Math.max(0, raw)))
     }
@@ -111,9 +125,13 @@ export function ScrollHighlightHero() {
     update()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
+    window.visualViewport?.addEventListener('resize', onScroll)
+    window.visualViewport?.addEventListener('scroll', onScroll)
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
+      window.visualViewport?.removeEventListener('resize', onScroll)
+      window.visualViewport?.removeEventListener('scroll', onScroll)
       if (frame) window.cancelAnimationFrame(frame)
     }
   }, [editMode])
