@@ -25,6 +25,9 @@ type EditorContextValue = {
   save: () => Promise<void>
   discard: () => Promise<void>
   addProject: () => string
+  addCaseMetric: (projectIndex: number) => void
+  addCaseSection: (projectIndex: number) => void
+  addCaseSectionImage: (projectIndex: number, sectionIndex: number) => void
   addNowItem: () => void
   addExperience: () => void
   addDesignExperience: () => void
@@ -166,10 +169,63 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       image: '/images/project-retail.jpg',
       externalUrl: '',
       externalLabel: '',
+      timeline: '',
+      platform: '',
+      role: '',
+      roleBody: '',
+      goal: '',
+      metrics: [],
+      sections: [],
+      nextSteps: '',
     }
     setDraft((prev) => setAt(prev, 'projects', [...prev.projects, project]))
     return slug
   }, [draft.projects])
+
+  const addCaseMetric = useCallback((projectIndex: number) => {
+    setDraft((prev) => {
+      const metrics = [...(prev.projects[projectIndex]?.metrics ?? [])]
+      metrics.push({
+        value: '0',
+        label: 'New metric',
+        detail: 'What this number means',
+      })
+      return setAt(prev, `projects.${projectIndex}.metrics`, metrics)
+    })
+  }, [])
+
+  const addCaseSection = useCallback((projectIndex: number) => {
+    setDraft((prev) => {
+      const sections = [...(prev.projects[projectIndex]?.sections ?? [])]
+      const title = 'New section'
+      let key = slugify(title)
+      const existing = new Set(sections.map((s) => s.key))
+      let n = 1
+      while (existing.has(key)) {
+        key = `${slugify(title)}-${n}`
+        n += 1
+      }
+      sections.push({
+        key,
+        title,
+        body: 'Describe this chapter of the case study.',
+        images: [],
+      })
+      return setAt(prev, `projects.${projectIndex}.sections`, sections)
+    })
+  }, [])
+
+  const addCaseSectionImage = useCallback((projectIndex: number, sectionIndex: number) => {
+    setDraft((prev) => {
+      const images = [...(prev.projects[projectIndex]?.sections[sectionIndex]?.images ?? [])]
+      images.push({
+        src: '',
+        alt: '',
+        caption: '',
+      })
+      return setAt(prev, `projects.${projectIndex}.sections.${sectionIndex}.images`, images)
+    })
+  }, [])
 
   const addNowItem = useCallback(() => {
     setDraft((prev) =>
@@ -302,6 +358,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       save,
       discard,
       addProject,
+      addCaseMetric,
+      addCaseSection,
+      addCaseSectionImage,
       addNowItem,
       addExperience,
       addDesignExperience,
@@ -330,6 +389,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       save,
       discard,
       addProject,
+      addCaseMetric,
+      addCaseSection,
+      addCaseSectionImage,
       addNowItem,
       addExperience,
       addDesignExperience,

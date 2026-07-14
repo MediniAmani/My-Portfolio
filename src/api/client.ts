@@ -1,9 +1,10 @@
 const API_URL = import.meta.env.VITE_API_URL
 
 const MAX_UPLOAD_BYTES = 50 * 1024 * 1024
-const MAX_EDGE_PX = 2400
+const MAX_EDGE_PX = 1600
 const TARGET_MIME_JPEG = 'image/jpeg'
-const JPEG_QUALITY = 0.85
+const JPEG_QUALITY = 0.8
+const FORCE_REENCODE_BYTES = 1 * 1024 * 1024
 
 export function apiUrl(path: string): string {
   if (!API_URL) {
@@ -26,7 +27,11 @@ export function resolveMediaUrl(url: string): string {
   if (url.startsWith('/uploads/')) {
     return apiUrl(url)
   }
+  // Encode path segments so filenames with spaces resolve in <img src>.
   return url
+    .split('/')
+    .map((segment, index) => (index === 0 || segment === '' ? segment : encodeURIComponent(segment)))
+    .join('/')
 }
 
 function loadImageElement(file: File): Promise<HTMLImageElement> {
@@ -65,7 +70,7 @@ export async function prepareImageForUpload(file: File): Promise<File> {
   const image = await loadImageElement(file)
   const longest = Math.max(image.naturalWidth, image.naturalHeight)
   const needsResize = longest > MAX_EDGE_PX
-  const needsReencode = file.size > 2 * 1024 * 1024 || needsResize
+  const needsReencode = file.size > FORCE_REENCODE_BYTES || needsResize
   if (!needsReencode) {
     return file
   }

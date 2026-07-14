@@ -1,1 +1,2 @@
-export type { Project, ExperienceItem, WorkProcessStep, PortfolioContent } from './types'
+export type { Project, ExperienceItem, WorkProcessStep, CaseMetric, CaseImage, CaseSection, PortfolioContent } from './types'
+

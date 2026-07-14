@@ -76,6 +76,19 @@ export function EditorShell() {
     )
   }
 
+  function workDetailSlug(): string | null {
+    const match = location.pathname.match(/^\/admin\/work\/([^/]+)$/)
+    return match ? match[1] : null
+  }
+
+  function workDetailIndex(): number {
+    const slug = workDetailSlug()
+    if (!slug) return -1
+    return activeEditor.getPath('projects')
+      ? (activeEditor.getPath('projects') as { slug: string }[]).findIndex((p) => p.slug === slug)
+      : -1
+  }
+
   return (
     <div className={styles.wrap}>
       <div className={styles.bar}>
@@ -115,6 +128,28 @@ export function EditorShell() {
                     >
                       Highlight
                     </button>
+                    {workDetailIndex() >= 0 ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            editor.addCaseMetric(workDetailIndex())
+                            setAddOpen(false)
+                          }}
+                        >
+                          Metric
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            editor.addCaseSection(workDetailIndex())
+                            setAddOpen(false)
+                          }}
+                        >
+                          Case section
+                        </button>
+                      </>
+                    ) : null}
                   </>
                 ) : null}
                 {onAboutPath() ? (
@@ -133,7 +168,7 @@ export function EditorShell() {
                       onClick={() => {
                         editor.addExperience()
                         setAddOpen(false)
-                      }}
+                      }} 
                     >
                       Experience
                     </button>

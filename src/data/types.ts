@@ -1,3 +1,22 @@
+export type CaseMetric = {
+  value: string
+  label: string
+  detail: string
+}
+
+export type CaseImage = {
+  src: string
+  alt: string
+  caption: string
+}
+
+export type CaseSection = {
+  key: string
+  title: string
+  body: string
+  images: CaseImage[]
+}
+
 export type Project = {
   slug: string
   title: string
@@ -12,6 +31,14 @@ export type Project = {
   image: string
   externalUrl: string
   externalLabel: string
+  timeline: string
+  platform: string
+  role: string
+  roleBody: string
+  goal: string
+  metrics: CaseMetric[]
+  sections: CaseSection[]
+  nextSteps: string
 }
 
 export type ExperienceItem = {
@@ -144,11 +171,21 @@ export type PortfolioContent = {
     notFoundBody: string
     backToWork: string
     overview: string
+    role: string
     problem: string
+    goal: string
     approach: string
     impact: string
+    metrics: string
     highlights: string
     tools: string
+    nextSteps: string
+    timelineLabel: string
+    platformLabel: string
+    roleLabel: string
+    addMetric: string
+    addSection: string
+    addSectionImage: string
     moreProjects: string
     discuss: string
   }
