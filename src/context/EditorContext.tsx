@@ -210,6 +210,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         title,
         body: 'Describe this chapter of the case study.',
         layout: 'stack',
+        imageLayout: 'stack',
         images: [],
       })
       return setAt(prev, `projects.${projectIndex}.sections`, sections)

@@ -68,6 +68,13 @@
 .imageWrapEmpty {
   display: block;
   min-height: 4rem;
+  width: 100%;
+}
+
+.imageWrapEmpty .imageActions {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
 }
 
 .placeholderHost {

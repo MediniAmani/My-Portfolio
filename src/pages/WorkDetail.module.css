@@ -252,6 +252,13 @@
   min-width: 12rem;
 }
 
+.layoutPickers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .layoutPicker {
   display: inline-grid;
   grid-template-columns: 1fr 1fr;
@@ -344,9 +351,48 @@
   gap: 1.5rem;
 }
 
+.shotRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 16rem));
+  gap: clamp(0.85rem, 2vw, 1.35rem);
+  align-items: start;
+  justify-content: start;
+}
+
+.shotPhone {
+  margin: 0;
+}
+
+.shotPhone img {
+  border-radius: 1.1rem;
+  background: #eef6d8;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.1);
+}
+
+.shotPhone figcaption {
+  margin-top: 0.55rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
 .shot {
   margin: 0.35rem 0 0.15rem;
   position: relative;
+}
+
+.imageSlotEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 12rem;
+  width: 100%;
+  border-radius: 1.1rem;
+  border: 1px dashed var(--line);
+  background: rgba(238, 246, 216, 0.55);
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
 }
 
 .shot img {
@@ -480,6 +526,10 @@
   .beatSplit {
     grid-template-columns: 1fr;
     gap: 1.15rem;
+  }
+
+  .shotRow {
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
   }
 
   .metrics {

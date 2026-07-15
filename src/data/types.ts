@@ -11,12 +11,15 @@ export type CaseImage = {
 }
 
 export type CaseSectionLayout = 'stack' | 'split'
+/** How chapter images arrange relative to each other. */
+export type CaseImageLayout = 'stack' | 'row'
 
 export type CaseSection = {
   key: string
   title: string
   body: string
   layout: CaseSectionLayout
+  imageLayout: CaseImageLayout
   images: CaseImage[]
 }
 
@@ -192,6 +195,9 @@ export type PortfolioContent = {
     sectionLayoutLabel: string
     sectionLayoutStack: string
     sectionLayoutSplit: string
+    sectionImageLayoutLabel: string
+    sectionImageLayoutStack: string
+    sectionImageLayoutRow: string
     moreProjects: string
     discuss: string
   }

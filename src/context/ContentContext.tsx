@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { fetchContent } from '../api/client'
-import type { CaseSectionLayout, PortfolioContent } from '../data/types'
+import type { CaseImageLayout, CaseSectionLayout, PortfolioContent } from '../data/types'
 
 export type ContentContextValue = {
   content: PortfolioContent
@@ -52,6 +52,10 @@ function isCaseSectionLayout(value: unknown): value is CaseSectionLayout {
   return value === 'stack' || value === 'split'
 }
 
+function isCaseImageLayout(value: unknown): value is CaseImageLayout {
+  return value === 'stack' || value === 'row'
+}
+
 /** Bring older CMS payloads up to the current case-study schema. */
 function migratePortfolioContent(data: PortfolioContent): PortfolioContent {
   const workPage = {
@@ -59,6 +63,9 @@ function migratePortfolioContent(data: PortfolioContent): PortfolioContent {
     sectionLayoutLabel: data.workPage.sectionLayoutLabel ?? 'Chapter layout',
     sectionLayoutStack: data.workPage.sectionLayoutStack ?? 'Stacked',
     sectionLayoutSplit: data.workPage.sectionLayoutSplit ?? 'Side by side',
+    sectionImageLayoutLabel: data.workPage.sectionImageLayoutLabel ?? 'Screen layout',
+    sectionImageLayoutStack: data.workPage.sectionImageLayoutStack ?? 'Screens stacked',
+    sectionImageLayoutRow: data.workPage.sectionImageLayoutRow ?? 'Screens side by side',
   }
 
   const projects = data.projects.map((project) => ({
@@ -66,6 +73,7 @@ function migratePortfolioContent(data: PortfolioContent): PortfolioContent {
     sections: project.sections.map((section) => ({
       ...section,
       layout: isCaseSectionLayout(section.layout) ? section.layout : 'stack',
+      imageLayout: isCaseImageLayout(section.imageLayout) ? section.imageLayout : 'stack',
     })),
   }))
 

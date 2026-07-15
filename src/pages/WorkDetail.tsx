@@ -17,7 +17,9 @@ function splitParagraphs(body: string): string[] {
 }
 
 function renderParagraph(text: string, key: string) {
-  const match = text.match(/^(PROBLEM|EXAMPLE|IMPACT|JOB TO BE DONE)\s+[—-]\s+([\s\S]+)$/i)
+  const match = text.match(
+    /^(PROBLEM|EXAMPLE|IMPACT|JOB TO BE DONE|MY ROLE|BUSINESS GOALS|USER GOALS)\s+[—-]\s+([\s\S]+)$/i,
+  )
   if (!match) {
     return <p key={key}>{text}</p>
   }
@@ -251,39 +253,81 @@ export function WorkDetail() {
                               </span>
                             </ListItemControls>
                           </div>
-                          <div
-                            className={styles.layoutPicker}
-                            role="group"
-                            aria-label={workPage.sectionLayoutLabel}
-                          >
-                            <button
-                              type="button"
-                              className={
-                                section.layout === 'stack'
-                                  ? `${styles.layoutOption} ${styles.layoutOptionActive}`
-                                  : styles.layoutOption
-                              }
-                              aria-pressed={section.layout === 'stack'}
-                              onClick={() =>
-                                editor.setPath(`${base}.sections.${sectionIndex}.layout`, 'stack')
-                              }
+                          <div className={styles.layoutPickers}>
+                            <div
+                              className={styles.layoutPicker}
+                              role="group"
+                              aria-label={workPage.sectionLayoutLabel}
                             >
-                              {workPage.sectionLayoutStack}
-                            </button>
-                            <button
-                              type="button"
-                              className={
-                                section.layout === 'split'
-                                  ? `${styles.layoutOption} ${styles.layoutOptionActive}`
-                                  : styles.layoutOption
-                              }
-                              aria-pressed={section.layout === 'split'}
-                              onClick={() =>
-                                editor.setPath(`${base}.sections.${sectionIndex}.layout`, 'split')
-                              }
+                              <button
+                                type="button"
+                                className={
+                                  section.layout === 'stack'
+                                    ? `${styles.layoutOption} ${styles.layoutOptionActive}`
+                                    : styles.layoutOption
+                                }
+                                aria-pressed={section.layout === 'stack'}
+                                onClick={() =>
+                                  editor.setPath(`${base}.sections.${sectionIndex}.layout`, 'stack')
+                                }
+                              >
+                                {workPage.sectionLayoutStack}
+                              </button>
+                              <button
+                                type="button"
+                                className={
+                                  section.layout === 'split'
+                                    ? `${styles.layoutOption} ${styles.layoutOptionActive}`
+                                    : styles.layoutOption
+                                }
+                                aria-pressed={section.layout === 'split'}
+                                onClick={() =>
+                                  editor.setPath(`${base}.sections.${sectionIndex}.layout`, 'split')
+                                }
+                              >
+                                {workPage.sectionLayoutSplit}
+                              </button>
+                            </div>
+                            <div
+                              className={styles.layoutPicker}
+                              role="group"
+                              aria-label={workPage.sectionImageLayoutLabel}
                             >
-                              {workPage.sectionLayoutSplit}
-                            </button>
+                              <button
+                                type="button"
+                                className={
+                                  section.imageLayout === 'stack'
+                                    ? `${styles.layoutOption} ${styles.layoutOptionActive}`
+                                    : styles.layoutOption
+                                }
+                                aria-pressed={section.imageLayout === 'stack'}
+                                onClick={() =>
+                                  editor.setPath(
+                                    `${base}.sections.${sectionIndex}.imageLayout`,
+                                    'stack',
+                                  )
+                                }
+                              >
+                                {workPage.sectionImageLayoutStack}
+                              </button>
+                              <button
+                                type="button"
+                                className={
+                                  section.imageLayout === 'row'
+                                    ? `${styles.layoutOption} ${styles.layoutOptionActive}`
+                                    : styles.layoutOption
+                                }
+                                aria-pressed={section.imageLayout === 'row'}
+                                onClick={() =>
+                                  editor.setPath(
+                                    `${base}.sections.${sectionIndex}.imageLayout`,
+                                    'row',
+                                  )
+                                }
+                              >
+                                {workPage.sectionImageLayoutRow}
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ) : (
@@ -293,19 +337,31 @@ export function WorkDetail() {
                       {editor ? (
                         <>
                           <EditableText path={`${base}.sections.${sectionIndex}.body`} as="p" multiline />
-                          <div className={styles.gallery}>
+                          <div
+                            className={
+                              section.imageLayout === 'row' ? styles.shotRow : styles.gallery
+                            }
+                          >
                             {images.map((image, imageIndex) => (
                               <ListItemControls
                                 key={imageIndex}
                                 arrayPath={`${base}.sections.${sectionIndex}.images`}
                                 index={imageIndex}
                               >
-                                <figure className={`${styles.shot} ${shotClass(imageIndex, image.src)}`}>
-                                  {image.src ? (
-                                    <EditableImageUrl
-                                      path={`${base}.sections.${sectionIndex}.images.${imageIndex}.src`}
-                                    />
-                                  ) : null}
+                                <figure
+                                  className={
+                                    section.imageLayout === 'row'
+                                      ? `${styles.shot} ${styles.shotPhone}`
+                                      : `${styles.shot} ${shotClass(imageIndex, image.src)}`
+                                  }
+                                >
+                                  <EditableImageUrl
+                                    path={`${base}.sections.${sectionIndex}.images.${imageIndex}.src`}
+                                    allowClear
+                                    placeholder={
+                                      <span className={styles.imageSlotEmpty}>Upload an image</span>
+                                    }
+                                  />
                                   <figcaption>
                                     <EditableText
                                       path={`${base}.sections.${sectionIndex}.images.${imageIndex}.caption`}
@@ -329,6 +385,25 @@ export function WorkDetail() {
                             onAdd={() => editor.addCaseSectionImage(workIndex, sectionIndex)}
                           />
                         </>
+                      ) : section.imageLayout === 'row' ? (
+                        <div className={styles.beat}>
+                          {paragraphs.map((paragraph, index) =>
+                            renderParagraph(paragraph, `p-${index}`),
+                          )}
+                          {images.length > 0 ? (
+                            <div className={styles.shotRow}>
+                              {images.map((image, imageIndex) => (
+                                <figure
+                                  key={imageIndex}
+                                  className={`${styles.shot} ${styles.shotPhone}`}
+                                >
+                                  <img src={resolveMediaUrl(image.src)} alt={image.alt} />
+                                  {image.caption ? <figcaption>{image.caption}</figcaption> : null}
+                                </figure>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
                       ) : (
                         Array.from({ length: steps }, (_, step) => {
                           const paragraph = paragraphs[step]
